@@ -124,6 +124,13 @@ namespace MyWindowsService
         Thread listenThread;
         bool running;
 
+        SafeFileHandle pipeHandle;
+        public SafeFileHandle PipeHandle
+        {
+            get { return this.pipeHandle; }
+            set { this.pipeHandle = value; }
+        }
+
 
         public string PipeName
         {
@@ -190,10 +197,12 @@ namespace MyWindowsService
                      BUFFER_SIZE,
                      0,
                      pSa);
-
+                this.PipeHandle = clientHandle;
                 //could not create named pipe
                 if (clientHandle.IsInvalid)
                     return;
+
+               
 
                 int success = ConnectNamedPipe(clientHandle, IntPtr.Zero);
                 //ImpersonateNamedPipeClient(clientHandle);
@@ -209,6 +218,9 @@ namespace MyWindowsService
 
                 Thread readThread = new Thread(new ParameterizedThreadStart(Read));
                 readThread.Start(client);
+
+               
+
             }
         }
 
@@ -274,6 +286,7 @@ namespace MyWindowsService
         }
 
 
+        
 
 
 
